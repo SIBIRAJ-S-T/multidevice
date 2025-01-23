@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Form</title>
+  <style>
+    /* Your existing styles */
+    table {
+      margin-top: 20px;
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #003b5b;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <form method="post" name="contact-form">
+      <h4>Contact Us</h4>
+      <input type="text" name="your-name" placeholder="Name">
+      <input type="text" name="your-number" placeholder="Number">
+      <input type="email" name="your-email" placeholder="Email">
+      <input type="number" name="age" placeholder="Age">
+      <input type="submit" value="Submit" id="submit">
+    </form>
+    <a href="https://docs.google.com/spreadsheets/d/10HH_T6td5eR9cmaFDTmhpBkl7VSHzSo1PPUMEJWPIBc/edit?usp=sharing" class="s-link" target="_blank" rel="noopener">Click here to see results in Google Sheet</a>
+    <h4>Submitted Data</h4>
+    <table id="data-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Number</th>
+          <th>Email</th>
+          <th>Age</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Data will be populated here -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbz0UJvF-p1B6UbNvUhvmQd6WQJIHxR5O5Wbc_P1dKGxkzL7O_9NMmsGG6h2W3dzeYB-fw/exec';
+    const form = document.forms['contact-form'];
+    const tableBody = document.getElementById('data-table').querySelector('tbody');
+
+    // Handle form submission
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      fetch(scriptURL, { method: 'POST', body: new FormData(form) })
+        .then(response => {
+          alert("Thank you! Your form is submitted successfully.");
+          fetchData(); // Fetch updated data
+        })
+        .catch(error => console.error('Error!', error.message));
+    });
+
+    // Fetch data from Google Sheets
+    function fetchData() {
+      fetch(scriptURL)
+        .then(response => response.json())
+        .then(data => {
+          // Clear existing table rows
+          tableBody.innerHTML = '';
+          // Populate table with data
+          data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+              const td = document.createElement('td');
+              td.textContent = cell;
+              tr.appendChild(td);
+            });
+            tableBody.appendChild(tr);
+          });
+        })
+        .catch(error => console.error('Error fetching data:', error.message));
+    }
+
+    // Fetch data on page load
+    fetchData();
+  </script>
+
+</body>
+</html>
