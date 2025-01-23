@@ -90,6 +90,9 @@
 
     // Fetch data on page load
     fetchData();
+
+    // Refresh data every 2 seconds
+    setInterval(fetchData, 2000);  // Refresh every 2 seconds
   </script>
 
 </body>
